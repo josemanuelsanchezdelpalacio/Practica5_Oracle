@@ -6,18 +6,21 @@ import libs.Leer;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import static code.Insertar.*;
+
 public class Main {
 
     public static void main(String[] args) {
         boolean salir = false;
         int opcion;
-        Connection conexion = null;
 
         do {
             System.out.println("0. Salir");
             System.out.println("1. Conectar a la base de datos");
-            System.out.println("2. Insertar alumno");
-            System.out.println("3. Listar nota media alumnos");
+            System.out.println("2. Insertar contacto");
+            System.out.println("3. Modificar teléfono de contacto");
+            System.out.println("4. Eliminar contacto");
+            System.out.println("5. Mostrar primer contacto");
 
             opcion = Leer.pedirEntero("Introduce una opción: ");
 
@@ -26,7 +29,6 @@ public class Main {
                     salir = true;
                     break;
                 case 1:
-                    //String nombreBD = Leer.pedirCadena("Introduce el nombre de la base de datos: ");
                     try {
                         PoolConexiones.conectar();
                     } catch (SQLException e) {
@@ -34,13 +36,32 @@ public class Main {
                     }
                     break;
                 case 2:
-                    Insertar.insertarAlumno();
+                    String nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
+                    String telefono = Leer.pedirCadena("Introduce el teléfono del contacto: ");
+                    insertarContacto(nombre, telefono);
+                    break;
                 case 3:
-                    Listar.notasMediasAlumnos();
+                    nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
+                    String nuevoTelefono = Leer.pedirCadena("Introduce el nuevo teléfono del contacto: ");
+                    modificarTelefono(nombre, nuevoTelefono);
+                    break;
+                case 4:
+                    nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
+                    eliminarContacto(nombre);
+                    break;
+                case 5:
+                    nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
+                    String telefonoBuscado = obtenerPrimerTelefono(nombre);
+                    if (telefonoBuscado != null) {
+                        System.out.println("El primer teléfono de " + nombre + " es " + telefonoBuscado);
+                    } else {
+                        System.out.println("No se encontró ningún teléfono para " + nombre);
+                    }
                 default:
                     System.out.println("La opción seleccionada no existe");
             }
 
         } while (!salir);
     }
+
 }
