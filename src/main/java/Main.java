@@ -1,12 +1,12 @@
 import Conexion.PoolConexiones;
-import code.Insertar;
-import code.Listar;
 import libs.Leer;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
-import static code.Insertar.*;
+import static code.MetodosEliminarListar.eliminarContacto;
+import static code.MetodosEliminarListar.obtenerPrimerTelefono;
+import static code.MetodosInsertarModificar.insertarContacto;
+import static code.MetodosInsertarModificar.modificarTelefono;
 
 public class Main {
 
