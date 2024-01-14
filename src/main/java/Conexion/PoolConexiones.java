@@ -9,7 +9,7 @@ import java.sql.SQLException;
 public class PoolConexiones {
 
     private static String SERVER = "jdbc:oracle:thin:@//localhost:1523";
-    private static String BD = "objerel";
+    private static String BD = "objrel";
     private static String USER = "root";
     private static String PASSWORD = "admin";
 

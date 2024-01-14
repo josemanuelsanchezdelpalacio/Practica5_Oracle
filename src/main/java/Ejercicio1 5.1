@@ -1,0 +1,46 @@
+//creo el tipo de varray TELEFONO
+CREATE TYPE TELEFONO AS VARRAY(3) OF VARCHAR2(9);
+
+//creo la tabla AGENDA
+CREATE TABLE AGENDA (NOMBRE VARCHAR2(15), TELEF TELEFONO);
+
+//datos de agenda
+INSERT INTO AGENDA VALUES('MANUEL', TELEFONO('656008876', '92798665', '639883300'));
+INSERT INTO AGENDA VALUES('MARTA', TELEFONO('649500800'));
+
+//creo la funcion para obtener el primer telefono con sus excepciones
+CREATE OR REPLACE FUNCTION OBTENER_PRIMER_TELEFONO(p_nombre IN VARCHAR2)
+    RETURN TELEFONO IS
+    v_telefono TELEFONO;
+BEGIN
+    SELECT TELEF
+    INTO v_telefono
+    FROM AGENDA A
+    WHERE A.NOMBRE = p_nombre
+      AND ROWNUM = 1; -- para que solo salga un telefono
+
+    IF v_telefono IS NULL OR v_telefono.COUNT = 0 THEN
+        v_telefono := TELEFONO(NULL, NULL, NULL);
+    END IF;
+
+    RETURN v_telefono;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RETURN TELEFONO(NULL, NULL, NULL);
+    WHEN OTHERS THEN
+        RETURN TELEFONO(NULL, NULL, NULL);
+END;
+
+//para mostrar por pantalla la informacion de cada usuario usando la funcion anterior
+DECLARE
+    v_name VARCHAR2(15) := 'MANUEL';
+    v_phone TELEFONO; -- Cambiado a TELEFONO
+BEGIN
+    v_phone := OBTENER_PRIMER_TELEFONO(v_name);
+    DBMS_OUTPUT.PUT_LINE('El primer teléfono de ' || v_name || ' es ' || v_phone(1));
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No se encontro ningun teléfono para ' || v_name);
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('Se encontraron demasiados registros para ' || v_name);
+END;

@@ -2,43 +2,35 @@ package code;
 
 import Conexion.PoolConexiones;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class MetodosEliminarListar {
 
     public static void eliminarContacto(String nombre) {
-        try (Connection miCon = PoolConexiones.conectar()) {
-            String deleteQuery = "DELETE FROM AGENDA WHERE NOMBRE = ?";
-            try (PreparedStatement ps = miCon.prepareStatement(deleteQuery)) {
-                ps.setString(1, nombre);
-                ps.executeUpdate();
-                System.out.println("Contacto " + nombre + " eliminado.");
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+        String query = "DELETE FROM AGENDA WHERE NOMBRE = ?";
+        try (Connection connection = PoolConexiones.conectar();
+             PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setString(1, nombre);
+            pstmt.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
-    public static String obtenerPrimerTelefono(String nombre) {
-        String telefono = null;
-        String selectQuery = "SELECT TELEF FROM AGENDA WHERE NOMBRE = ? AND ROWNUM = 1";
-        try (Connection miCon = PoolConexiones.conectar();
-             PreparedStatement ps = miCon.prepareStatement(selectQuery)) {
-            ps.setString(1, nombre);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    telefono = rs.getString("TELEF");
-                }
-            }
+    public static Array obtenerPrimerTelefono(String nombre) {
+        Array primerTelefono = null;
+        String query = "{? = call OBTENER_PRIMER_TELEFONO(?)}";
+        try (Connection connection = PoolConexiones.conectar();
+             CallableStatement cstmt = connection.prepareCall(query)) {
+            cstmt.registerOutParameter(1, Types.ARRAY);
+            cstmt.setString(2, nombre);
+            cstmt.execute();
+            primerTelefono = cstmt.getArray(1);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        return telefono;
+        return primerTelefono;
     }
+
 
 }
