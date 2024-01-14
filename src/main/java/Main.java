@@ -1,6 +1,9 @@
 import Conexion.PoolConexiones;
 import code.MetodosEliminarListar;
 import code.MetodosInsertarModificar;
+import database.EmfSingleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import libs.Leer;
 
 import java.sql.Array;
@@ -12,6 +15,10 @@ import static code.MetodosInsertarModificar.insertarContacto;
 import static code.MetodosInsertarModificar.modificarTelefono;
 
 public class Main {
+
+    static EntityManagerFactory emf = EmfSingleton.getInstance().getEmf();
+    public static EntityManager em = emf.createEntityManager();
+
     public static void main(String[] args) throws SQLException {
         boolean salir = false;
         int opcion;
@@ -31,36 +38,27 @@ public class Main {
                     salir = true;
                     break;
                 case 1:
-                    try {
-                        PoolConexiones.conectar();
-                        System.out.println("Conexión establecida correctamente.");
-                    } catch (SQLException e) {
-                        System.out.println("Error al conectar a la base de datos.");
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:
                     String nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
                     String telefono = Leer.pedirCadena("Introduce el teléfono del contacto: ");
                     Array telefonosArray = PoolConexiones.conectar().createArrayOf("VARCHAR", new String[]{telefono});
-                    MetodosInsertarModificar.insertarContacto(nombre, telefonosArray);
+                    MetodosInsertarModificar.insertarContacto(em, nombre, telefonosArray);
                     System.out.println("Contacto insertado correctamente.");
                     break;
-                case 3:
+                case 2:
                     nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
                     String nuevoTelefono = Leer.pedirCadena("Introduce el nuevo teléfono del contacto: ");
                     Array nuevosTelefonosArray = PoolConexiones.conectar().createArrayOf("VARCHAR", new String[]{nuevoTelefono});
-                    MetodosInsertarModificar.modificarTelefono(nombre, nuevosTelefonosArray);
+                    MetodosInsertarModificar.modificarTelefono(em, nombre, nuevosTelefonosArray);
                     System.out.println("Teléfono modificado correctamente.");
+                    break;
+                case 3:
+                    nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
+                    MetodosEliminarListar.eliminarContacto(em, nombre);
+                    System.out.println("Contacto eliminado correctamente.");
                     break;
                 case 4:
                     nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
-                    MetodosEliminarListar.eliminarContacto(nombre);
-                    System.out.println("Contacto eliminado correctamente.");
-                    break;
-                case 5:
-                    nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
-                    Array primerTelefono = MetodosEliminarListar.obtenerPrimerTelefono(nombre);
+                    Array primerTelefono = (Array) MetodosEliminarListar.obtenerPrimerTelefono(em, nombre);
                     if (primerTelefono != null) {
                         System.out.println("El primer teléfono de " + nombre + " es " + primerTelefono.toString());
                     } else {
@@ -72,6 +70,12 @@ public class Main {
             }
 
         } while (!salir);
+        desconectar();
+    }
+
+    private static void desconectar() {
+        em.close();
+        emf.close();
     }
 
 }
