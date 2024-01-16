@@ -24,14 +24,18 @@ public class MetodosInsertarModificar {
         }
     }
 
-    /**Modificar el teléfono de un contacto existente
-    public static void modificarTelefono(EntityManager em, String nombre, Array telefonos) {
-        em.getTransaction().begin();
-        Query q = em.createNativeQuery("UPDATE AGENDA SET TELEF = ? WHERE NOMBRE = ?");
-        q.setParameter(1, telefonos);
-        q.setParameter(2, nombre);
-        q.executeUpdate();
-        em.getTransaction().commit();
-    }**/
+    /**Modificar el teléfono de un contacto existente**/
+    public static void modificarTelefono() {
+        try(Connection con = ConexionOracle.conectar("objerel")){
+            String nombre = Leer.pedirCadena("Introduce nuevo nombre: ");
+            int telefono = Leer.pedirEntero("Introduce nuevo telefono: ");
+            PreparedStatement ps = con.prepareStatement("INSERT INTO AGENDA VALUES(?, TELEFONO(?))");
+            ps.setString(1, nombre);
+            ps.setInt(2, telefono);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
