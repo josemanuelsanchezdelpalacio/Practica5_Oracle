@@ -34,6 +34,7 @@ public class MetodosInsertarModificar {
             PreparedStatement ps = con.prepareStatement("UPDATE AGENDA SET NOMBRE = ?, TELEFONO = ? WHERE NOMBRE = ?");
             ps.setString(1, nuevoNombre);
             ps.setInt(2, nuevoTelefono);
+            ps.setString(3, nombre);  // Use the WHERE clause to specify the record to update
             int rowsAffected = ps.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -45,5 +46,4 @@ public class MetodosInsertarModificar {
             throw new RuntimeException(e);
         }
     }
-
 }
