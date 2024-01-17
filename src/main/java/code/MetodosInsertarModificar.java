@@ -27,23 +27,20 @@ public class MetodosInsertarModificar {
     /**Modificar el teléfono de un contacto existente**/
     public static void modificarTelefono() {
         try (Connection con = ConexionOracle.conectar("objerel")) {
-            String nombre = Leer.pedirCadena("Introduce el nombre a modificar: ");
-            String nuevoNombre = Leer.pedirCadena("Introduce el nuevo nombre: ");
-            int nuevoTelefono = Leer.pedirEntero("Introduce el nuevo teléfono: ");
+        String nombre = Leer.pedirCadena("Introduce el nombre a modificar: ");
+        int nuevoTelefono = Leer.pedirEntero("Introduce el nuevo teléfono: ");
 
-            PreparedStatement ps = con.prepareStatement("UPDATE AGENDA SET NOMBRE = ?, TELEFONO = ? WHERE NOMBRE = ?");
-            ps.setString(1, nuevoNombre);
-            ps.setInt(2, nuevoTelefono);
-            ps.setString(3, nombre);  // Use the WHERE clause to specify the record to update
-            int rowsAffected = ps.executeUpdate();
+        PreparedStatement ps = con.prepareStatement("UPDATE AGENDA SET TELEFONO = ? WHERE NOMBRE = ?");
+        ps.setInt(1, nuevoTelefono);
+        ps.setString(2, nombre);  // Use the WHERE clause to specify the record to update
+        int rowsAffected = ps.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.println("Registro modificado correctamente.");
-            } else {
-                System.out.println("No se encontró el registro con el nombre proporcionado.");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if (rowsAffected > 0) {
+            System.out.println("Registro modificado correctamente.");
+        } else {
+            System.out.println("No se encontró el registro con el nombre proporcionado.");
         }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
 }
