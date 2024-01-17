@@ -32,49 +32,26 @@ public class MetodosEliminarListar {
     /**
      * Acceder al primer teléfono de un contacto haciendo uso de la función almacenada creada en el ejercicio anterior
      **/
-    public static List<String> obtenerPrimerTelefono() {
-        List<String> telefonos = new ArrayList<>();
-
+    public static void accederPrimerTelefono() {
         try (Connection con = ConexionOracle.conectar("objerel")) {
-            String v_name = Leer.pedirCadena("Introduce nuevo nombre: "); // Consider removing this line if not needed
+            String nombre = Leer.pedirCadena("Introduce el nombre del contacto: ");
 
-            try (CallableStatement cs = con.prepareCall("{ CALL ? := OBTENER_PRIMER_TELEFONO(?) }")) {
-                cs.registerOutParameter(1, Types.ARRAY, "TELEFONO_ARRAY");
-                cs.setString(2, v_name);
+            CallableStatement cs = con.prepareCall("{? = call OBTENER_PRIMER_TELEFONO(?)}");
+            cs.registerOutParameter(1, Types.ARRAY, "TELEFONO");
+            cs.setString(2, nombre);
+            cs.execute();
 
-                cs.execute();
+            Array telefonoArray = cs.getArray(1);
+            int[] telefono = (int[]) telefonoArray.getArray();
 
-                // Retrieve the result from the OUT parameter
-                Array phoneArray = cs.getArray(1);
-                if (phoneArray != null) {
-                    Object[] phoneData = (Object[]) phoneArray.getArray();
-                    for (Object phone : phoneData) {
-                        telefonos.add(phone.toString());
-                    }
-
-                    if (!telefonos.isEmpty()) {
-                        System.out.println("El primer teléfono de " + v_name + " es " + telefonos.get(0));
-                    } else {
-                        System.out.println("No se encontró ningún teléfono para " + v_name);
-                    }
-                } else {
-                    System.out.println("No se encontró ningún teléfono para " + v_name);
-                }
-            } catch (SQLException e) {
-                if (e.getErrorCode() == 1403) {
-                    System.out.println("No se encontró ningún teléfono para " + v_name);
-                } else if (e.getErrorCode() == 100 && e.getMessage().contains("TOO_MANY_ROWS")) {
-                    System.out.println("Se encontraron demasiados registros para " + v_name);
-                } else {
-                    throw new RuntimeException(e);
-                }
+            if (telefono.length > 0) {
+                System.out.println("El primer teléfono de " + nombre + " es " + telefono[0]);
+            } else {
+                System.out.println("No se encontró ningún teléfono para " + nombre);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return telefonos;
     }
-
 }
-
 
