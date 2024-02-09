@@ -1,13 +1,12 @@
 
-import code.MetodosEliminarListar;
-import code.MetodosInsertarModificar;
+import code.*;
 import libs.Leer;
 
 import java.sql.SQLException;
 
 public class Main {
 
-    public static void main(String[] args) throws SQLException {
+    public static void main(String[] args) {
         boolean salir = false;
         int opcion;
 
@@ -25,18 +24,16 @@ public class Main {
                     salir = true;
                     break;
                 case 1:
-                    MetodosInsertarModificar.insertarContacto();
-                    System.out.println("Contacto insertado correctamente.");
+                    Insertar.insertarContacto();
                     break;
                 case 2:
-                    MetodosInsertarModificar.modificarTelefono();
+                    Modificar.modificarContacto();
                     break;
                 case 3:
-                    MetodosEliminarListar.eliminarContacto();
+                    Eliminar.eliminarContacto();
                     break;
                 case 4:
-                    MetodosEliminarListar.obtenerPrimerTelefono();
-                    break;
+                    ObtenerTelefono.obtenerPrimerTelefono();
                 default:
                     System.out.println("La opción seleccionada no existe");
             }
