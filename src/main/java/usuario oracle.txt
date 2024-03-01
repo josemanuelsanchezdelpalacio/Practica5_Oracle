@@ -1,3 +1,6 @@
+docker run -it --name oracle23 -d -p 1523:1521 -e ORACLE_PASSWORD=admin -e ORACLE_DATABASE=objerel gvenzl/oracle-free
+
+docker exec <container name|id> createAppUser <your app user> <your app user password> [<your target PDB>]
 docker exec oracle23 createAppUser root admin objerel
 
 CREATE OR REPLACE TYPE DIRECCION AS OBJECT(
