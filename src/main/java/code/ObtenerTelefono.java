@@ -17,7 +17,7 @@ public class ObtenerTelefono {
             try (CallableStatement cs = con.prepareCall("{ ? = call OBTENER_PRIMER_TELEFONO(?) }")) {
                 //configuro los parametros de entrada y salida y ejecuto la funcion
                 cs.registerOutParameter(1, Types.ARRAY, "TELEFONO");
-                String nombre = Leer.pedirCadena("Introduce el nombre del nuevo contacto: ");
+                String nombre = Leer.pedirCadena("Introduce el nombre del contacto que quieres obtener el telefono: ");
                 cs.setString(2, nombre);
                 cs.execute();
 
